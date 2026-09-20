@@ -1,6 +1,29 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.trim() ||
-  'https://full-stack-job-recruitment-9djp.vercel.app';
+function getResolvedApiBaseUrl(): string {
+  let url = (import.meta.env.VITE_API_BASE_URL || '').trim();
+
+  // Strip accidental quotes if provided in env vars (e.g. "https://..." or 'https://...')
+  if (
+    (url.startsWith('"') && url.endsWith('"')) ||
+    (url.startsWith("'") && url.endsWith("'"))
+  ) {
+    url = url.slice(1, -1).trim();
+  }
+
+  // Fallback to primary production backend if not configured or empty
+  if (!url) {
+    url = 'https://full-stack-job-recruitment-9djp.vercel.app';
+  }
+
+  // Prevent browser Mixed Content blocking: if app is on HTTPS, enforce HTTPS
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http://')) {
+    url = url.replace(/^http:\/\//, 'https://');
+  }
+
+  // Remove trailing slashes
+  return url.replace(/\/+$/, '');
+}
+
+const API_BASE_URL = getResolvedApiBaseUrl();
 
 export class ApiError extends Error {
   status: number;
@@ -56,7 +79,7 @@ export async function apiClient<T = any>(
 ): Promise<T> {
   const { params, headers: customHeaders, body, ...customOptions } = options;
 
-  let url = `${API_BASE_URL.replace(/\/$/, '')}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  let url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
   if (params) {
     const searchParams = new URLSearchParams();
@@ -88,15 +111,33 @@ export async function apiClient<T = any>(
     Object.assign(headers, customHeaders);
   }
 
+  // Execute fetch with automatic single retry for network errors/cold starts
   let response: Response;
-  try {
-    response = await fetch(url, {
+  const executeFetch = () =>
+    fetch(url, {
       headers,
       body,
       ...customOptions,
     });
-  } catch (err: any) {
-    throw new ApiError(0, 'Unable to connect to the recruitment server. Please check your internet connection.');
+
+  try {
+    response = await executeFetch();
+  } catch (initialErr: any) {
+    // Retry once after 1 second if initial attempt fails (useful for serverless cold-start or momentary latency)
+    try {
+      await new Promise((res) => setTimeout(res, 1200));
+      response = await executeFetch();
+    } catch (retryErr: any) {
+      console.error(`[API Connection Error] Failed connecting to ${url}:`, retryErr);
+      const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+      const hint = isHttps && API_BASE_URL.startsWith('http://')
+        ? ' (Blocked mixed content: HTTPS site cannot call HTTP API)'
+        : '';
+      throw new ApiError(
+        0,
+        `Unable to connect to the recruitment server (${API_BASE_URL})${hint}. The server may be waking up or unreachable. Please try again.`
+      );
+    }
   }
 
   let responseData: any = null;

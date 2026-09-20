@@ -11,6 +11,7 @@ import { RecruiterApplicationsPage } from './pages/RecruiterApplicationsPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AdminJobsPage } from './pages/AdminJobsPage';
 import { AdminRecruitersPage } from './pages/AdminRecruitersPage';
+import { API_BASE_URL } from './api/client';
 
 function AppContent() {
   const { session, role, isAuthenticated, isLoading } = useAuth();
@@ -162,9 +163,10 @@ function AppContent() {
           <p>
             <strong>TalentTrack ATS</strong> • Production React Frontend connected to FastAPI backend
           </p>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="font-mono text-[11px]">
-              API: full-stack-job-recruitment-9djp.vercel.app
+          <div className="flex items-center gap-3 text-slate-400">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              API: {API_BASE_URL.replace(/^https?:\/\//, '')}
             </span>
           </div>
         </div>

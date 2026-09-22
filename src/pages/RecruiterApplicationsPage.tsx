@@ -5,7 +5,9 @@ import {
   getRecruiterApplications,
   updateApplicationStage,
 } from '../api/recruiter';
+import { getAdminJobs } from '../api/admin';
 import { extractErrorMessage } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { StatusBadge } from '../components/StatusBadge';
 import { PipelineIndicator } from '../components/PipelineIndicator';
@@ -14,6 +16,7 @@ import { NotesModal } from '../components/NotesModal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { EmptyState } from '../components/EmptyState';
 import { TableSkeleton } from '../components/LoadingSkeleton';
+import { AISummaryCard } from '../components/AISummaryCard';
 import {
   User,
   Mail,
@@ -42,6 +45,7 @@ export const RecruiterApplicationsPage: React.FC<RecruiterApplicationsPageProps>
   initialJobId,
   onNavigate,
 }) => {
+  const { role } = useAuth();
   const { showToast } = useToast();
 
   const [assignedJobs, setAssignedJobs] = useState<Job[]>([]);
@@ -65,16 +69,30 @@ export const RecruiterApplicationsPage: React.FC<RecruiterApplicationsPageProps>
   } | null>(null);
   const [isProcessingStage, setIsProcessingStage] = useState<boolean>(false);
 
-  // Load recruiter's assigned jobs
+  // Load recruiter's assigned jobs (or all jobs for admin)
   useEffect(() => {
     const loadJobs = async () => {
       setIsLoadingJobs(true);
       try {
-        const jobs = await getRecruiterJobs();
+        let jobs: Job[] = [];
+        if (role === 'admin') {
+          try {
+            jobs = await getAdminJobs();
+          } catch {
+            jobs = await getRecruiterJobs();
+          }
+        } else {
+          jobs = await getRecruiterJobs();
+        }
         const list = Array.isArray(jobs) ? jobs : [];
         setAssignedJobs(list);
-        if (list.length > 0 && !selectedJobId) {
-          setSelectedJobId(list[0].id);
+        if (list.length > 0) {
+          const matchInitial = initialJobId && list.some((j) => j.id === initialJobId);
+          if (matchInitial) {
+            setSelectedJobId(initialJobId);
+          } else if (!selectedJobId) {
+            setSelectedJobId(list[0].id);
+          }
         }
       } catch (err: any) {
         setErrorMessage(extractErrorMessage(err));
@@ -83,7 +101,7 @@ export const RecruiterApplicationsPage: React.FC<RecruiterApplicationsPageProps>
       }
     };
     loadJobs();
-  }, []);
+  }, [role, initialJobId]);
 
   // Load applicants whenever selected job changes
   const fetchApplicationsForJob = async (jobId: string) => {
@@ -367,11 +385,11 @@ export const RecruiterApplicationsPage: React.FC<RecruiterApplicationsPageProps>
                           </a>
                         ) : (
                           <span
-                            className="px-3 py-1.5 text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-1.5"
-                            title="CV stored in backend repository"
+                            className="px-3 py-1.5 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-1.5"
+                            title="CV document on record"
                           >
-                            <FileText className="w-4 h-4" />
-                            <span>CV in Supabase</span>
+                            <FileText className="w-4 h-4 text-slate-400" />
+                            <span>CV Attached</span>
                           </span>
                         )}
 
@@ -395,6 +413,30 @@ export const RecruiterApplicationsPage: React.FC<RecruiterApplicationsPageProps>
                     {/* Pipeline Progress Indicator */}
                     <div className="pt-2 pb-1">
                       <PipelineIndicator currentStage={app.stage} size="sm" />
+                    </div>
+
+                    {/* AI CV Summary (Recruiter & Admin Only) */}
+                    <div className="pt-2">
+                      <AISummaryCard
+                        applicationId={app.id}
+                        status={app.ai_summary_status}
+                        summary={app.ai_summary}
+                        generatedAt={app.ai_summary_generated_at}
+                        onSummaryUpdated={(updatedData) => {
+                          setApplications((prev) =>
+                            prev.map((a) =>
+                              a.id === app.id
+                                ? {
+                                    ...a,
+                                    ai_summary_status: updatedData.ai_summary_status,
+                                    ai_summary: updatedData.ai_summary,
+                                    ai_summary_generated_at: updatedData.ai_summary_generated_at,
+                                  }
+                                : a
+                            )
+                          );
+                        }}
+                      />
                     </div>
 
                     {/* Interview info block if scheduled */}

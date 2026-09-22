@@ -11,7 +11,6 @@ import { RecruiterApplicationsPage } from './pages/RecruiterApplicationsPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AdminJobsPage } from './pages/AdminJobsPage';
 import { AdminRecruitersPage } from './pages/AdminRecruitersPage';
-import { API_BASE_URL } from './api/client';
 
 function AppContent() {
   const { session, role, isAuthenticated, isLoading } = useAuth();
@@ -142,7 +141,7 @@ function AppContent() {
         return <AdminDashboard onNavigate={navigateTo} />;
 
       case 'admin-jobs':
-        return <AdminJobsPage />;
+        return <AdminJobsPage onNavigate={navigateTo} />;
 
       case 'admin-recruiters':
         return <AdminRecruitersPage />;
@@ -160,14 +159,11 @@ function AppContent() {
 
       <footer className="border-t border-slate-200 bg-white py-6 px-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>
-            <strong>TalentTrack ATS</strong> • Production React Frontend connected to FastAPI backend
-          </p>
-          <div className="flex items-center gap-3 text-slate-400">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              API: {API_BASE_URL.replace(/^https?:\/\//, '')}
-            </span>
+          <p>© 2026 Job Recruitment System. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-slate-500 font-medium">
+            <span className="hover:text-slate-800 transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-slate-800 transition-colors cursor-pointer">Terms of Service</span>
+            <span className="hover:text-slate-800 transition-colors cursor-pointer">Support</span>
           </div>
         </div>
       </footer>

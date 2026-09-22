@@ -79,7 +79,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
               Recruitment Analytics & Control
             </h1>
             <p className="mt-1 text-sm text-slate-500 max-w-xl">
-              Real-time pipeline metrics, stage distributions, recruiter assignments, and job requisition lifecycles synchronized with FastAPI.
+              Real-time pipeline metrics, stage distributions, recruiter assignments, and job requisition lifecycles.
             </p>
           </div>
 

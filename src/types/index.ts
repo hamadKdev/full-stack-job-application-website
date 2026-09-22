@@ -44,6 +44,15 @@ export type ApplicationStage =
   | 'Rejected'
   | 'Withdrawn';
 
+export type AISummaryStatus = 'pending' | 'completed' | 'failed' | string;
+
+export interface AISummary {
+  short_profile?: string[];
+  requirements_mentioned?: string[];
+  requirements_not_found?: string[];
+  interview_questions?: string[];
+}
+
 export interface Application {
   id: string;
   job_id: string;
@@ -64,6 +73,9 @@ export interface Application {
   meeting_link?: string;
   created_at?: string;
   status?: string;
+  ai_summary_status?: AISummaryStatus;
+  ai_summary?: AISummary | null;
+  ai_summary_generated_at?: string;
 }
 
 export interface Recruiter {

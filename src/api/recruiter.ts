@@ -37,9 +37,12 @@ export async function addApplicationNote(
   applicationId: string,
   note: string
 ): Promise<{ message: string; [key: string]: any }> {
-  // As verified via OpenAPI specification, note is passed as query parameter
+  // Pass note as query parameter
   return apiClient(`/applications/${applicationId}/notes`, {
     method: 'POST',
     params: { note },
   });
 }
+
+export { getAIApplicationSummary, retryAISummary } from './applications';
+

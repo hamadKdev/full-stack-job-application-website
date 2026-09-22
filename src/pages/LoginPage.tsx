@@ -136,7 +136,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
           <div className="pt-2 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Authenticated via FastAPI JWT Bearer Tokens</span>
+            <span>Secure encrypted authentication & role-based access</span>
           </div>
         </div>
       </div>

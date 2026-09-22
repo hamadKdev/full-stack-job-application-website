@@ -473,7 +473,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-slate-400 block mb-1">Authentication Method</span>
-                  <span className="font-semibold text-slate-700">FastAPI JWT Bearer</span>
+                  <span className="font-semibold text-slate-700">Encrypted JWT Session</span>
                 </div>
               </div>
 

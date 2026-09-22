@@ -66,6 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
       return [
         { id: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'admin-jobs', label: 'Job Management', icon: Briefcase },
+        { id: 'recruiter-applicants', label: 'Applications & AI', icon: FileText },
         { id: 'admin-recruiters', label: 'Recruiters', icon: Users },
       ];
     }
@@ -114,7 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
                   </span>
                 </span>
                 <span className="block text-[11px] text-slate-500 font-medium">
-                  FastAPI Recruitment Hub
+                  Recruitment Portal
                 </span>
               </div>
             </button>

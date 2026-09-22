@@ -129,13 +129,9 @@ export async function apiClient<T = any>(
       response = await executeFetch();
     } catch (retryErr: any) {
       console.error(`[API Connection Error] Failed connecting to ${url}:`, retryErr);
-      const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-      const hint = isHttps && API_BASE_URL.startsWith('http://')
-        ? ' (Blocked mixed content: HTTPS site cannot call HTTP API)'
-        : '';
       throw new ApiError(
         0,
-        `Unable to connect to the recruitment server (${API_BASE_URL})${hint}. The server may be waking up or unreachable. Please try again.`
+        'Unable to connect to the recruitment server. Please try again in a moment.'
       );
     }
   }

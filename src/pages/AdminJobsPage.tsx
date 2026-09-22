@@ -30,7 +30,11 @@ import {
   FileCheck,
 } from 'lucide-react';
 
-export const AdminJobsPage: React.FC = () => {
+interface AdminJobsPageProps {
+  onNavigate?: (view: string, contextId?: string) => void;
+}
+
+export const AdminJobsPage: React.FC<AdminJobsPageProps> = ({ onNavigate }) => {
   const { showToast } = useToast();
 
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -318,6 +322,20 @@ export const AdminJobsPage: React.FC = () => {
                                 </button>
                               )}
 
+                              {/* View Applicants (AI CV Summaries) Button */}
+                              {onNavigate && (
+                                <button
+                                  type="button"
+                                  id={`view-applicants-btn-${job.id}`}
+                                  onClick={() => onNavigate('recruiter-applicants', job.id)}
+                                  className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-colors flex items-center gap-1"
+                                  title="View applicants and AI CV summaries"
+                                >
+                                  <Users className="w-3.5 h-3.5" />
+                                  <span>Applicants</span>
+                                </button>
+                              )}
+
                               {/* Assign Recruiter Button */}
                               <button
                                 type="button"
@@ -386,6 +404,15 @@ export const AdminJobsPage: React.FC = () => {
                             className="flex-1 py-1.5 px-3 text-xs font-semibold text-rose-700 bg-rose-100 rounded-lg text-center"
                           >
                             Close Job
+                          </button>
+                        )}
+                        {onNavigate && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('recruiter-applicants', job.id)}
+                            className="py-1.5 px-3 text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg text-center"
+                          >
+                            Applicants
                           </button>
                         )}
                         <button

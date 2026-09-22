@@ -210,12 +210,21 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
             </div>
           )}
 
-          {/* Notice info */}
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-            <span>
-              Your CV will be securely transmitted to the recruitment team. Application status will be initialized to <strong>Applied</strong>.
-            </span>
+          {/* Notice info & AI Disclosure */}
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+              <span>
+                Your CV will be securely transmitted to the recruitment team. Application status will be initialized to <strong>Applied</strong>.
+              </span>
+            </div>
+
+            <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 leading-relaxed">
+              <p className="font-semibold text-amber-950 mb-0.5">Recruitment Evaluation Disclosure:</p>
+              <p className="text-amber-800">
+                Your CV may be summarized using AI to assist recruiters. AI does not make hiring decisions. All recruitment decisions are made by people.
+              </p>
+            </div>
           </div>
 
           {/* Footer Actions */}
